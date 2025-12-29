@@ -1,0 +1,20 @@
+# Planetary Energy Mastery Ethical Vector (PEMEV-11)
+
+**QAI PROJECT / QERRA Hybrid Algorithm - Vector 11**  
+Open-source ethical guidance framework for hybrid/quantum humanoids toward Kardashev Type I civilization.
+
+### Purpose
+PEMEV-11 establishes an accurate scientific baseline for humanity's progress to Type I planetary energy mastery (~1.74 × 10¹⁷ W benchmark).  
+It calculates current Kardashev level (~0.73 in 2025) and projects realistic pathways (renewables, fusion, orbital solar, Mars ISRU).
+
+Built to integrate with QERRA remorse horizons and W-state robustness in future vectors — ensuring only fair, sustainable, remorse-free paths are recommended.
+
+### Current Status (Dec 29 2025)
+- Baseline phase complete  
+- Realistic projections added (10×, 1000×, full Type I scenarios)  
+- Pure Python (numpy) — verifiable by anyone
+
+### How to Run
+```bash
+pip install numpy
+python pemev11_with_projections.py
