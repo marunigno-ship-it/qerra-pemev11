@@ -5,16 +5,17 @@ Open-source ethical guidance framework for hybrid/quantum humanoids toward Karda
 
 ### Purpose
 PEMEV-11 establishes an accurate scientific baseline for humanity's progress to Type I planetary energy mastery (~1.74 × 10¹⁷ W benchmark).  
-It calculates current Kardashev level (~0.73 in 2025) and projects realistic pathways (renewables, fusion, orbital solar, Mars ISRU).
+It calculates current Kardashev level (~0.73 in 2025), projects realistic pathways (renewables, fusion, orbital solar, Mars ISRU), and applies ethical scoring to recommend/reject paths based on equity and sustainability.
 
-Built to integrate with QERRA remorse horizons and W-state robustness in future vectors — ensuring only fair, sustainable, remorse-free paths are recommended.
+Built to integrate with QERRA remorse horizons and W-state robustness — ensuring only fair, sustainable, remorse-free paths are recommended.
 
-### Current Status (Dec 29 2025)
-- Baseline phase complete  
-- Realistic projections added (10×, 1000×, full Type I scenarios)  
+### Current Status (Dec 31 2025)
+- Baseline + projections complete  
+- Ethical scoring layer v2 added (adjustable weights/threshold)  
+- Supports fast breakthroughs if ethics high  
 - Pure Python (numpy) — verifiable by anyone
 
 ### How to Run
 ```bash
 pip install numpy
-python pemev11_with_projections.py
+python pemev11_ethical_v2.py  # Latest with ethical evaluations
