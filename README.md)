@@ -1,6 +1,10 @@
 # Planetary Energy Mastery Ethical Vector (PEMEV-11)
 
 **QAI PROJECT / QERRA Hybrid Algorithm - Vector 11**  
+**Author:** Marussa Metocharaki (@marunigno)  
+**Date:** January 2026 – Greece 🇬🇷  
+**Aided by:** Grok (xAI)
+
 Open-source ethical guidance framework for hybrid/quantum humanoids toward Kardashev Type I civilization.
 
 ### Purpose
@@ -9,7 +13,7 @@ It calculates current Kardashev level (~0.73 in 2025), projects realistic pathwa
 
 Ensuring only fair, sustainable, remorse-free paths.
 
-### Current Status (Jan 03 2026)
+### Current Status
 - Baseline + projections complete  
 - Ethical scoring v2 (adjustable weights/threshold)  
 - Real-world hints (current path REJECT)  
