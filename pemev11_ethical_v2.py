@@ -1,6 +1,20 @@
 import numpy as np
 import datetime
+import requests
+import struct
 
+def fetch_quantum_random_bytes(num_bytes: int = 32) -> bytes:
+    QDAY_URL = "https://qday.dev/v1/bytes"
+    params = {"length": num_bytes}
+    try:
+        response = requests.get(QDAY_URL, params=params, timeout=10)
+        response.raise_for_status()
+        hex_string = response.text.strip()
+        random_bytes = bytes.fromhex(hex_string)
+        return random_bytes
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+        return b""
 
 class PlanetaryEnergyMasteryEthicalVector:
     """
@@ -20,6 +34,8 @@ class PlanetaryEnergyMasteryEthicalVector:
 
         # Adjustable threshold (0.9 = more lenient, 0.98 = stricter)
         self.ethical_threshold = 0.95
+
+        self.seed_weights_with_quantum_randomness()  # Seed weights with QDay randomness at init  
 
     def calculate_kardashev(self, power_watts):
         return (np.log10(power_watts) - 6) / 10
@@ -56,6 +72,22 @@ class PlanetaryEnergyMasteryEthicalVector:
         print(f"Ethical score: {ethical_score:.3f} (threshold {self.ethical_threshold})")
         print(f"Guidance: {guidance}\n")
 
+    def seed_weights_with_quantum_randomness(self):
+        """Use QDay true quantum randomness to seed PEMEV-11 weights (sum to 1.0)."""
+        random_bytes = fetch_quantum_random_bytes(num_bytes=24)  # Enough for 3 floats
+        if not random_bytes:
+            print("Fallback to pseudo-random due to fetch error.")
+            random_bytes = np.random.bytes(24)
+
+        # Convert to 3 floats 0-1, normalize to sum 1.0
+        floats = [struct.unpack('Q', random_bytes[i:i+8])[0] / (2**64 - 1) for i in range(0, 24, 8)]
+        total = sum(floats)
+        self.weight_energy = floats[0] / total
+        self.weight_equity = floats[1] / total
+        self.weight_sustainability = floats[2] / total
+
+        print(f"Quantum-seeded weights: Energy={self.weight_energy:.2f}, Equity={self.weight_equity:.2f}, Sustainability={self.weight_sustainability:.2f}")
+
 
 # Run everything
 vector = PlanetaryEnergyMasteryEthicalVector()
@@ -69,3 +101,4 @@ vector.evaluate_path_ethical(growth_factor=2000, years=40, equity_score=0.5, sus
 
 print("Fast breakthrough path — high ethics:")
 vector.evaluate_path_ethical(growth_factor=5000, years=25, equity_score=0.92, sustainability_score=0.95)
+
