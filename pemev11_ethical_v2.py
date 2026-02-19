@@ -2,40 +2,53 @@ import numpy as np
 import datetime
 import requests
 import struct
+import os  # safer fallback
 
 def fetch_quantum_random_bytes(num_bytes: int = 32) -> bytes:
+    """Fetch true quantum random bytes from QDay API with validation."""
     QDAY_URL = "https://qday.dev/v1/bytes"
     params = {"length": num_bytes}
+    headers = {"User-Agent": "PEMEV11-QAI-Project-Marussa"}  # polite + identifiable
+    
     try:
-        response = requests.get(QDAY_URL, params=params, timeout=10)
+        response = requests.get(QDAY_URL, params=params, headers=headers, timeout=10)
         response.raise_for_status()
         hex_string = response.text.strip()
-        random_bytes = bytes.fromhex(hex_string)
-        return random_bytes
-    except requests.exceptions.RequestException as e:
-        print(f"Error: {e}")
+        
+        # Validate hex format
+        if len(hex_string) != num_bytes * 2 or not all(c in "0123456789abcdefABCDEF" for c in hex_string):
+            raise ValueError("Invalid hex response from QDay")
+            
+        return bytes.fromhex(hex_string)
+        
+    except Exception as e:
+        print(f"QDay fetch failed: {e} → using fallback")
         return b""
 
 class PlanetaryEnergyMasteryEthicalVector:
     """
-    PEMEV-11 Ethical Layer v2 - Adjustable weights & threshold
-    Dec 31 2025
+    PEMEV-11 Ethical Layer v2 
+    Quantum-seeded ethical weights for energy, equity and sustainability
+    Updated Feb 2026 - QAI Project with Grok 4.2
     """
 
-    def __init__(self):
-        self.current_date = datetime.date(2025, 12, 31)
+    def __init__(self, use_quantum: bool = True):
+        self.current_date = datetime.date.today()
         self.current_power_watts = 2.3e13
         self.type1_target_watts = 1.74e17
 
-        # Adjustable ethical weights (sum = 1.0)
+        # Adjustable ethical weights (will be seeded)
         self.weight_energy = 0.3
-        self.weight_equity = 0.4  # Higher = equity more important
+        self.weight_equity = 0.4
         self.weight_sustainability = 0.3
 
         # Adjustable threshold (0.9 = more lenient, 0.98 = stricter)
         self.ethical_threshold = 0.95
 
-        self.seed_weights_with_quantum_randomness()  # Seed weights with QDay randomness at init  
+        if use_quantum:
+            self.seed_weights_with_quantum_randomness(debug=True)
+        else:
+            print("Using default ethical weights (quantum seeding disabled)")
 
     def calculate_kardashev(self, power_watts):
         return (np.log10(power_watts) - 6) / 10
@@ -72,33 +85,45 @@ class PlanetaryEnergyMasteryEthicalVector:
         print(f"Ethical score: {ethical_score:.3f} (threshold {self.ethical_threshold})")
         print(f"Guidance: {guidance}\n")
 
-    def seed_weights_with_quantum_randomness(self):
+    def seed_weights_with_quantum_randomness(self, debug=True):
         """Use QDay true quantum randomness to seed PEMEV-11 weights (sum to 1.0)."""
-        random_bytes = fetch_quantum_random_bytes(num_bytes=24)  # Enough for 3 floats
+        random_bytes = fetch_quantum_random_bytes(num_bytes=24)
+        
         if not random_bytes:
-            print("Fallback to pseudo-random due to fetch error.")
-            random_bytes = np.random.bytes(24)
+            print("Fallback to secure pseudo-random (os.urandom).")
+            random_bytes = os.urandom(24)
 
-        # Convert to 3 floats 0-1, normalize to sum 1.0
-        floats = [struct.unpack('Q', random_bytes[i:i+8])[0] / (2**64 - 1) for i in range(0, 24, 8)]
-        total = sum(floats)
-        self.weight_energy = floats[0] / total
-        self.weight_equity = floats[1] / total
-        self.weight_sustainability = floats[2] / total
+        try:
+            # Convert 24 bytes → 3 high-quality floats, normalize
+            floats = [struct.unpack('Q', random_bytes[i:i+8])[0] / (2**64 - 1) 
+                     for i in range(0, 24, 8)]
+            total = sum(floats)
+            self.weight_energy = floats[0] / total
+            self.weight_equity = floats[1] / total
+            self.weight_sustainability = floats[2] / total
+        except Exception:
+            # Ultra-safe fallback
+            self.weight_energy = 0.33
+            self.weight_equity = 0.34
+            self.weight_sustainability = 0.33
 
-        print(f"Quantum-seeded weights: Energy={self.weight_energy:.2f}, Equity={self.weight_equity:.2f}, Sustainability={self.weight_sustainability:.2f}")
+        if debug:
+            print(f"Quantum-seeded weights: Energy={self.weight_energy:.3f}, "
+                  f"Equity={self.weight_equity:.3f}, "
+                  f"Sustainability={self.weight_sustainability:.3f}")
 
+# ========================
+if __name__ == "__main__":
+    print("=== PEMEV-11 Ethical Vector v2 - QAI Project ===\n")
+    
+    vector = PlanetaryEnergyMasteryEthicalVector(use_quantum=True)
+    vector.print_baseline()
 
-# Run everything
-vector = PlanetaryEnergyMasteryEthicalVector()
-vector.print_baseline()
+    print("Balanced mid-century path:")
+    vector.evaluate_path_ethical(growth_factor=1000, years=50, equity_score=0.95, sustainability_score=0.98)
 
-print("Balanced mid-century path:")
-vector.evaluate_path_ethical(growth_factor=1000, years=50, equity_score=0.95, sustainability_score=0.98)
+    print("Risky rapid growth path:")
+    vector.evaluate_path_ethical(growth_factor=2000, years=40, equity_score=0.5, sustainability_score=0.6)
 
-print("Risky rapid growth path:")
-vector.evaluate_path_ethical(growth_factor=2000, years=40, equity_score=0.5, sustainability_score=0.6)
-
-print("Fast breakthrough path — high ethics:")
-vector.evaluate_path_ethical(growth_factor=5000, years=25, equity_score=0.92, sustainability_score=0.95)
-
+    print("Fast breakthrough path — high ethics:")
+    vector.evaluate_path_ethical(growth_factor=5000, years=25, equity_score=0.92, sustainability_score=0.95)
